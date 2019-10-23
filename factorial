@@ -1,0 +1,72 @@
+#단순 반복문
+
+import time
+
+start = time.time()
+
+def fsum(num) :
+    
+    factorial=1
+    summation = 0
+    
+    for i in range(1,num+1):
+        factorial *= i 
+    
+    for j in str(factorial):
+        summation += int(j)
+        
+    return(summation)
+
+print(fsum(100000))
+
+print(time.time() - start)
+
+
+##by binary split
+
+import time
+
+start = time.time()
+
+# 이진수표현에서 길이
+def bit_length(self):
+    s = bin(self)       # binary representation:  bin(-37) --> '-0b100101'
+    s = s.lstrip('-0b') # remove leading zeros and minus sign
+    return len(s)       # len('100101') --> 6
+
+# 이진수 표현에서 1의 개수 세준다.
+def num_of_set_bits(i) :
+    # assert 0 <= i < 0x100000000
+    i = i - ((i >> 1) & 0x55555555)
+    i = (i & 0x33333333) + ((i >> 2) & 0x33333333)
+    return (((i + (i >> 4) & 0xF0F0F0F) * 0x1010101) & 0xffffffff) >> 24
+
+# P(a,b)연산 이용 P(n,0) = n!
+def rec_product(start, stop):
+
+   numfactors = (stop - start) >> 1
+   if numfactors == 2 : return start * (start + 2)
+   if numfactors > 1 :
+       mid = (start + numfactors) | 1
+       return rec_product(start, mid) * rec_product(mid, stop)
+   if numfactors == 1 : return start
+   return 1
+ 
+def binsplit_factorial(n):
+
+   inner = outer = 1
+
+#길이만큼 역뱡향으로 반복문 돈다.(연산해준것을 계속곱해준다.
+   for i in range(n.bit_length(), -1, -1):
+       inner *= rec_product((n >> i + 1) + 1 | 1, (n >> i) + 1 | 1)
+       outer *= inner
+   return outer << (n - num_of_set_bits(n))
+
+factorial = binsplit_factorial(100000)
+
+summation=0
+for j in str(factorial):
+    summation = summation + int(j)
+print(summation)
+
+print(time.time() - start)
